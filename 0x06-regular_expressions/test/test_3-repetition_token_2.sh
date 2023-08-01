@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Test 1-repetition_token_0
+# Test 3-repetition_token_2
 # Should print only tests that pass
 
-file='../1-repetition_token_0.rb'
+file='../3-repetition_token_2.rb'
 
 test=(
-    "htn"
-    "hbtn"
-    "hbttn"
-    "hbtttn"
-    "hbttttn"
-    "hbtttttn"
-    "hbtbtbtbtn"
+    hbn
+    hbtn
+    hbttn
+    hbtttn
+    hbttttn
+    hbtttttn
+    hbtbtbtbtn
     )
 
 if [ -e "$file" ]

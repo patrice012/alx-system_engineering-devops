@@ -10,13 +10,17 @@ test=(
     "Holberton"
 )
 
-if [ -e "$file" ]; then
-    if [ ! -x "$file" ]; then
+if [ -e "$file" ]
+then
+    if [ ! -x "$file" ]
+    then
         echo "Permission denied for $file"
     else
-        for i in "${test[@]}"; do
+        for i in "${test[@]}"
+        do
             output=$(ruby "$file" "$i")
-            if [ "$output" == "$i" ]; then
+            if [ "$output" == "$i" ]
+            then
                 echo "$i pass"
             else
                 echo "$i failed"
