@@ -1,55 +1,66 @@
 #!/usr/bin/env bash
-# Test 2-repetition_token_1
-# Should print only tests that pass
 
-# file='./2-repetition_token_1.rb'
+# Ask the user for the task ID
+echo "Enter the task ID:"
+read task_id
 
-function get_task_id() {
-    echo "Select the task to test (Enter task_id):"
-    read choice
-    if [ -z "$choice" ]
-    then
-        echo "Usage: $0 task_id"
+# Select the correct test file based on the task ID
+case $task_id in
+    0)
+        test_file="test0.txt"
+        file='../0-simply_match_school.rb'
+        ;;
+    1)
+        test_file="test1.txt"
+        file='../1-repetition_token_0.rb'
+        ;;
+    2)
+        test_file="test2.txt"
+        file='../2-repetition_token_1.rb'
+        ;;
+    3)
+        test_file="test3.txt"
+        file='../3-repetition_token_2.rb'
+        ;;
+    4)
+        test_file="test4.txt"
+        file='../4-repetition_token_3.rb'
+        ;;
+    5)
+        test_file="test5.txt"
+        file='../5-beginning_and_end.rb'
+        ;;
+    6)
+        test_file="test6.txt"
+        file='../6-phone_number.rb'
+        ;;
+    7)
+        test_file="test7.txt"
+        file='../7-OMG_WHY_ARE_YOU_SHOUTING.rb'
+        ;;
+    # Add more cases for other task IDs and corresponding test files if needed
+    *)
+        echo "Invalid task ID $task_id"
         exit 1
-    fi
-    echo "$choice"
-}
+        ;;
+esac
 
-function get_test_file() {
-    echo "Enter the test file name:"
-    read test_file
-    if [ -z "$test_file" ]
-    then
-        echo "Usage: $0 test_file"
-        exit 1
-    fi
-    echo "$test_file"
-}
 
-function run_task() {
-    task_id=$(get_task_id)
-    file=$(get_test_file)
-
-    if [ -e "$file" ]
-    then
-        if [ ! -x "$file" ]
+# Check if the test file exists
+if [ -e "$test_file" ]
+then
+    # Execute the test for each entry in the test file
+    while IFS= read -r test
+    do
+        # Run the test and check the output
+        output=$(ruby "$file" "$test")
+        if [ "$output" == "$test" ]
         then
-            echo "Permission denied for $file"
+            echo "$test pass"
         else
-            while IFS= read -r test
-            do
-                output=$(ruby "$file" "$test")
-                if [ "$output" == "$test" ]
-                then
-                    echo "$test pass"
-                else
-                    echo "$test failed"
-                fi
-            done < "$file"
+            echo "$test failed"
         fi
-    else
-        echo "$file does not exist"
-    fi
-}
-
-run_task
+    done < "$test_file"
+else
+    echo "$test_file does not exist"
+fi
