@@ -1,0 +1,59 @@
+# Global settings
+#---------------------------------------------------------------------
+global
+    log         /dev/log local0
+    maxconn     2048
+    user        haproxy
+    group       haproxy
+    tune.ssl.default-dh-param 2048
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+
+    # Default SSL material locations
+    ca-base /etc/ssl/certs
+    crt-base /etc/ssl/private
+
+    # See: https://ssl-config.mozilla.org/#server=haproxy&server-version=2.0.3&config=intermediate
+    ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+     ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+     ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       
+    option                  redispatch
+    retries                 3
+    timeout client 			15s
+    timeout connect			10s
+    timeout server 			15s
+    timeout http-request 	10s
+    errorfile 400 /etc/haproxy/errors/400.http 
+    errorfile 403 /etc/haproxy/errors/403.http 
+    errorfile 408 /etc/haproxy/errors/408.http 
+    errorfile 500 /etc/haproxy/errors/500.http 
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
+frontend myalx-frontend
+   bind *:80
+   bind *:443 ssl crt /etc/letsencrypt/live/www.myalx.tech/fullchain.pem
+   http-request redirect scheme https unless { ssl_fc }   
+   mode http
+   default_backend myalx-backend
+
+backend myalx-backend
+   balance roundrobin
+   server web-01 54.161.238.31:80 check
+   server web-02 3.85.1.142:80 check
+
